@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,10 +29,11 @@
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
+            justify-content: center;
         }
 
-        /* लॉगिन स्क्रीन स्टाइल */
-        .login-screen {
+        /* Authentication Screen Style */
+        .auth-screen {
             width: 100%;
             max-width: 450px;
             background: var(--card-bg);
@@ -44,12 +45,13 @@
             animation: fadeInUp 0.6s ease forwards;
         }
 
-        .login-screen h2 {
+        .auth-screen h2 {
             color: var(--primary-green);
             margin-bottom: 10px;
+            font-weight: 600;
         }
 
-        .login-screen p {
+        .auth-screen p {
             color: var(--text-muted);
             font-size: 0.9rem;
             margin-bottom: 25px;
@@ -72,7 +74,7 @@
             border-color: var(--primary-green);
         }
 
-        .login-btn {
+        .auth-btn {
             width: 100%;
             background: var(--primary-green);
             color: var(--bg-dark);
@@ -83,9 +85,17 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.2s;
+            margin-bottom: 15px;
         }
 
-        /* मुख्य ऐप कंटेनर (लॉगिन के बाद दिखेगा) */
+        .toggle-link {
+            color: var(--primary-green);
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        /* Main App Container */
         .app-container {
             display: none;
             width: 100%;
@@ -151,7 +161,7 @@
             margin-top: 15px; transition: 0.2s;
         }
 
-        /* जनरल कैलकुलेटर स्टाइल */
+        /* Calculator Style */
         .calc-screen {
             width: 100%; height: 65px; background: var(--bg-dark); border: 2px solid var(--primary-green);
             border-radius: 12px; margin-bottom: 15px; color: var(--primary-green); font-size: 2rem;
@@ -164,7 +174,7 @@
         .btn-clr { background: #ef4444; color: white; }
         .btn-eq { background: var(--primary-green); color: var(--bg-dark); grid-column: span 2; }
 
-        /* GST स्टाइल */
+        /* GST Style */
         .gst-btn-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; }
         .gst-calc-btn {
             background: #2d3a54; color: var(--primary-green); border: none; padding: 12px 5px;
@@ -175,16 +185,29 @@
 </head>
 <body>
 
-<!-- 1. लॉगिन बॉक्स (सबसे पहले दिखेगा) -->
-<div id="loginCard" class="login-screen">
-    <h2>FinCrx में लॉगिन करें</h2>
-    <p>आगे बढ़ने के लिए अपना विवरण दर्ज करें</p>
-    <input type="text" placeholder="मोबाइल नंबर या ईमेल आईडी" class="input-field" id="uName">
-    <input type="password" placeholder="पासवर्ड" class="input-field" id="uPass">
-    <button class="login-btn" onclick="handleLogin()">लॉगिन करें</button>
+<!-- Login Card -->
+<div id="loginCard" class="auth-screen">
+    <h2>Login to FinCrx</h2>
+    <p>Enter your credentials to continue</p>
+    <input type="text" placeholder="Mobile Number or Email ID" class="input-field" id="lName">
+    <input type="password" placeholder="Password" class="input-field" id="lPass">
+    <button class="auth-btn" onclick="handleLogin()">Login</button>
+    <div>Don't have an account? <span class="toggle-link" onclick="toggleAuth('signup')">Sign Up</span></div>
 </div>
 
-<!-- 2. मुख्य ऐप (लॉगिन के बाद खुलेगा) -->
+<!-- Signup Card -->
+<div id="signupCard" class="auth-screen" style="display: none;">
+    <h2>Create Account</h2>
+    <p>Sign up to start managing finances</p>
+    <input type="text" placeholder="Full Name" class="input-field" id="sName">
+    <input type="text" placeholder="Mobile Number" class="input-field" id="sPhone">
+    <input type="email" placeholder="Email ID" class="input-field" id="sEmail">
+    <input type="password" placeholder="Create Password" class="input-field" id="sPass">
+    <button class="auth-btn" onclick="handleSignup()">Sign Up</button>
+    <div>Already have an account? <span class="toggle-link" onclick="toggleAuth('login')">Login</span></div>
+</div>
+
+<!-- Main App Container -->
 <div id="appCard" class="app-container">
     <div class="header">
         <h1>FinCrx Hub</h1>
@@ -194,57 +217,40 @@
         <button class="tab-btn active" onclick="switchTab('sip')">SIP</button>
         <button class="tab-btn" onclick="switchTab('emi')">EMI</button>
         <button class="tab-btn" onclick="switchTab('gst')">GST</button>
-        <button class="tab-btn" onclick="switchTab('calc')">कैलकुलेटर</button>
+        <button class="tab-btn" onclick="switchTab('calc')">Calculator</button>
     </div>
 
-    <!-- SIP पैनल -->
+    <!-- SIP Panel -->
     <div id="sip-panel" class="calc-panel active">
         <div class="input-group">
-            <label>मासिक निवेश (₹)</label>
+            <label>Monthly Investment (₹)</label>
             <div class="input-row">
                 <input type="range" id="sip-amt-slide" min="500" max="100000" step="500" value="5000" oninput="syncInput('sip-amt'); updateSIP();">
                 <input type="number" id="sip-amt-num" value="5000" oninput="syncInput('sip-amt'); updateSIP();">
             </div>
         </div>
         <div class="input-group">
-            <label>अपेक्षित रिटर्न (वार्षिक %)</label>
+            <label>Expected Return (Annual %)</label>
             <div class="input-row">
                 <input type="range" id="sip-rate-slide" min="1" max="30" step="0.5" value="12" oninput="syncInput('sip-rate'); updateSIP();">
                 <input type="number" id="sip-rate-num" value="12" oninput="syncInput('sip-rate'); updateSIP();">
             </div>
         </div>
         <div class="input-group">
-            <label>समय अवधि (वर्ष)</label>
+            <label>Time Period (Years)</label>
             <div class="input-row">
                 <input type="range" id="sip-time-slide" min="1" max="40" step="1" value="10" oninput="syncInput('sip-time'); updateSIP();">
                 <input type="number" id="sip-time-num" value="10" oninput="syncInput('sip-time'); updateSIP();">
             </div>
         </div>
         <div class="results-box">
-            <div class="result-item"><span>कुल निवेश:</span><span id="sip-invested">₹0</span></div>
-            <div class="result-item"><span>अनुमानित रिटर्न:</span><span id="sip-gain">₹0</span></div>
-            <div class="result-item"><span>कुल वैल्यू:</span><span id="sip-total">₹0</span></div>
+            <div class="result-item"><span>Total Investment:</span><span id="sip-invested">₹0</span></div>
+            <div class="result-item"><span>Estimated Returns:</span><span id="sip-gain">₹0</span></div>
+            <div class="result-item"><span>Total Value:</span><span id="sip-total">₹0</span></div>
         </div>
         <button class="share-btn" onclick="shareReport('SIP')">Share Report</button>
     </div>
 
-    <!-- EMI पैनल -->
+    <!-- EMI Panel -->
     <div id="emi-panel" class="calc-panel">
-        <div class="input-group">
-            <label>लोन राशि (₹)</label>
-            <div class="input-row">
-                <input type="range" id="emi-amt-slide" min="10000" max="10000000" step="10000" value="500000" oninput="syncInput('emi-amt'); updateEMI();">
-                <input type="number" id="emi-amt-num" value="500000" oninput="syncInput('emi-amt'); updateEMI();">
-            </div>
-        </div>
-        <div class="input-group">
-            <label>ब्याज दर (वार्षिक %)</label>
-            <div class="input-row">
-                <input type="range" id="emi-rate-slide" min="1" max="20" step="0.1" value="8.5" oninput="syncInput('emi-rate'); updateEMI();">
-                <input type="number" id="emi-rate-num" value="8.5" oninput="syncInput('emi-rate'); updateEMI();">
-            </div>
-        </div>
-        <div class="input-group">
-            <label>अवधि (महीने)</label>
-            <div class="input-row">
-                
+        
