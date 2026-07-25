@@ -14,15 +14,14 @@ jobs:
           cd myapp
           cordova platform add android --confirm=false
           
-          # HTML फाइल और आइकन कॉपी करें
+          # HTML फाइल कॉपी करें
           rm -rf www/*
           cp ../fincrx.html www/index.html
           
-          mkdir -p res
-          cp ../icon.png res/icon.png
-          
-          # config.xml में आइकन सेट करें
-          sed -i '/<\/widget>/i \    <icon src="res/icon.png" />' config.xml
+          # सीधे एंड्रॉइड के सिस्टम फोल्डर (res) में आइकन रिप्लेस करें
+          cd platforms/android/app/src/main/res
+          find . -name "ic_launcher.png" -exec cp -f ../../../../../../../icon.png {} \;
+          cd ../../../../../..
           
           cordova build android --confirm=false
       - name: Find All Android Packages
