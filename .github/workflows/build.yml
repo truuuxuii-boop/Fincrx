@@ -22,7 +22,10 @@ jobs:
           mkdir -p res
           cp ../icon.png res/icon.png
           
-          # config.xml आइकन रजिस्ट्रेशन
+          # इंटरनेट और आइकन दोनों को config.xml में रजिस्टर करें
+          sed -i '/<\/widget>/i \    <access origin="*" />' config.xml
+          sed -i '/<\/widget>/i \    <allow-intent href="http://*/*" />' config.xml
+          sed -i '/<\/widget>/i \    <allow-intent href="https://*/*" />' config.xml
           sed -i '/<\/widget>/i \    <icon src="res/icon.png" />' config.xml
           sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/icon.png" />' config.xml
           
