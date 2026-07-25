@@ -14,14 +14,14 @@ jobs:
           cd myapp
           cordova platform add android --confirm=false
           
-          # यहाँ असली सुधार है - फ़ाइल का ओरिजिनल नाम बनाए रखा गया है
+          # Maintains original filename
           rm -rf www/*
           cp ../fincrx.html www/fincrx.html
           
-          # कॉर्डोवा को बताएं कि मुख्य फ़ाइल fincrx.html है
+          # Explictly register fincrx.html as the main index file
           sed -i 's/src="index.html"/src="fincrx.html"/' config.xml
           
-          # सुरक्षा ताला खोलने की अनुमति
+          # Open security permissions
           sed -i '/<\/widget>/i \    <access origin="*" />' config.xml
           sed -i '/<\/widget>/i \    <allow-intent href="http://*/*" />' config.xml
           sed -i '/<\/widget>/i \    <allow-intent href="https://*/*" />' config.xml
