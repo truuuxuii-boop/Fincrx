@@ -15,10 +15,12 @@ jobs:
           cordova platform add android --confirm=false
           rm -rf www/*
           cp ../fincrx.html www/index.html
-          cordova build android --release --confirm=false
-      - name: Find and Upload APK
+          cordova build android --confirm=false
+      - name: Find All Android Packages
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
-          path: myapp/**/*.apk
-          
+          path: |
+            **/*.apk
+            **/*.aab
+            
