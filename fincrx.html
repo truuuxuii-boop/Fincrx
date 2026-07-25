@@ -14,16 +14,10 @@
             --text-muted: #94a3b8;
         }
 
-        /* स्मूथ ओपनिंग एनिमेशन */
+        /* स्मूथ लॉन्च एनिमेशन */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         body {
@@ -36,6 +30,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            box-sizing: border-box;
         }
 
         .app-container {
@@ -72,7 +67,7 @@
             border: none;
             color: var(--text-muted);
             padding: 10px 2px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: bold;
             cursor: pointer;
             border-radius: 8px;
@@ -80,128 +75,50 @@
             text-align: center;
         }
 
-        .tab-btn.active {
-            background: var(--primary-green);
-            color: var(--bg-dark);
-        }
-
-        .calc-panel {
-            display: none;
-        }
-
-        .calc-panel.active {
-            display: block;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .input-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        input[type="range"] {
-            flex: 1;
-            accent-color: var(--primary-green);
-        }
-
+        .tab-btn.active { background: var(--primary-green); color: var(--bg-dark); }
+        .calc-panel { display: none; }
+        .calc-panel.active { display: block; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.9rem; }
+        .input-row { display: flex; align-items: center; gap: 10px; }
+        input[type="range"] { flex: 1; accent-color: var(--primary-green); }
         input[type="number"] {
-            width: 90px;
-            background: var(--bg-dark);
-            border: 1px solid #2d3a54;
-            border-radius: 8px;
-            color: var(--text-light);
-            padding: 8px;
-            text-align: center;
-            font-size: 0.9rem;
+            width: 95px; background: var(--bg-dark); border: 1px solid #2d3a54;
+            border-radius: 8px; color: var(--text-light); padding: 8px; text-align: center; font-size: 0.9rem;
         }
 
-        .results-box {
-            background: var(--bg-dark);
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 15px;
-        }
+        .results-box { background: var(--bg-dark); border-radius: 12px; padding: 15px; margin-top: 15px; }
+        .result-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .result-item span:last-child { color: var(--primary-green); font-weight: bold; }
+        .chart-container { position: relative; margin: 20px auto; height: 200px; width: 200px; }
 
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
+        .share-btn {
+            width: 100%; background: var(--primary-green); color: var(--bg-dark); border: none;
+            padding: 12px; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer;
+            margin-top: 15px; transition: 0.2s;
         }
-
-        .result-item span:last-child {
-            color: var(--primary-green);
-            font-weight: bold;
-        }
-
-        .chart-container {
-            position: relative;
-            margin: 15px auto;
-            height: 180px;
-            width: 180px;
-        }
+        .share-btn:active { transform: scale(0.98); }
 
         /* जनरल कैलकुलेटर स्टाइल */
         .calc-screen {
-            width: 100%;
-            height: 60px;
-            background: var(--bg-dark);
-            border: 2px solid var(--primary-green);
-            border-radius: 12px;
-            margin-bottom: 15px;
-            color: var(--primary-green);
-            font-size: 1.8rem;
-            text-align: right;
-            padding: 10px;
-            box-sizing: border-box;
+            width: 100%; height: 65px; background: var(--bg-dark); border: 2px solid var(--primary-green);
+            border-radius: 12px; margin-bottom: 15px; color: var(--primary-green); font-size: 2rem;
+            text-align: right; padding: 15px; box-sizing: border-box;
         }
-
-        .calc-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-
-        .grid-btn {
-            height: 50px;
-            border-radius: 10px;
-            border: none;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .grid-btn { height: 55px; border-radius: 12px; border: none; font-size: 1.3rem; font-weight: bold; cursor: pointer; }
         .btn-num { background: #1f293d; color: var(--text-light); }
         .btn-op { background: #2d3a54; color: var(--primary-green); }
         .btn-clr { background: #ef4444; color: white; }
         .btn-eq { background: var(--primary-green); color: var(--bg-dark); grid-column: span 2; }
 
-        /* GST बटन रो स्टाइल */
-        .gst-btn-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 10px;
-        }
+        /* GST स्टाइल */
+        .gst-btn-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; }
         .gst-calc-btn {
-            background: #2d3a54;
-            color: var(--primary-green);
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
+            background: #2d3a54; color: var(--primary-green); border: none; padding: 12px 5px;
+            border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;
         }
+        .gst-calc-btn.active { background: var(--primary-green); color: var(--bg-dark); }
     </style>
 </head>
 <body>
@@ -247,6 +164,7 @@
             <div class="result-item"><span>कुल वैल्यू:</span><span id="sip-total">₹0</span></div>
         </div>
         <div class="chart-container"><canvas id="sipChart"></canvas></div>
+        <button class="share-btn" onclick="shareReport('SIP')">Share Report</button>
     </div>
 
     <!-- 2. EMI पैनल -->
@@ -277,17 +195,22 @@
             <div class="result-item"><span>कुल ब्याज:</span><span id="emi-interest">₹0</span></div>
             <div class="result-item"><span>कुल भुगतान:</span><span id="emi-total">₹0</span></div>
         </div>
+        <button class="share-btn" onclick="shareReport('EMI')">Share Report</button>
     </div>
 
     <!-- 3. GST पैनल -->
     <div id="gst-panel" class="calc-panel">
         <div class="input-group">
             <label>मूल राशि (₹)</label>
-            <input type="number" id="gst-amount" value="1000" style="width:100%; text-align:left;" oninput="calculateGST(18)">
+            <input type="number" id="gst-amount" value="1000" style="width:100%; text-align:left; box-sizing: border-box;" oninput="calculateGST()">
         </div>
         <label style="color:var(--text-muted); font-size:0.9rem;">GST दर चुनें:</label>
         <div class="gst-btn-row">
-            <button class="gst-calc-btn" onclick="calculateGST(5)">5%</button>
-            <button class="gst-calc-btn" onclick="calculateGST(12)">12%</button>
-            <button class="gst-calc-btn" onclick="calculateGST(18)">18%</button>
-          
+            <button class="gst-calc-btn" id="gst-5" onclick="changeGSTRate(5)">5%</button>
+            <button class="gst-calc-btn" id="gst-12" onclick="changeGSTRate(12)">12%</button>
+            <button class="gst-calc-btn active" id="gst-18" onclick="changeGSTRate(18)">18%</button>
+            <button class="gst-calc-btn" id="gst-28" onclick="changeGSTRate(28)">28%</button>
+        </div>
+        <div class="results-box">
+            <div class="result-item"><span>चुनी गई GST दर:</span><span id="gst-rate-show">18%</span></div>
+            
