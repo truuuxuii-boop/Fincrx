@@ -14,11 +14,14 @@ jobs:
           cd myapp
           cordova platform add android --confirm=false
           
-          # HTML फाइल कॉपी करें
+          # यहाँ असली सुधार है - फ़ाइल का ओरिजिनल नाम बनाए रखा गया है
           rm -rf www/*
-          cp ../fincrx.html www/index.html
+          cp ../fincrx.html www/fincrx.html
           
-          # इंटरनेट अनुमति सेट करें
+          # कॉर्डोवा को बताएं कि मुख्य फ़ाइल fincrx.html है
+          sed -i 's/src="index.html"/src="fincrx.html"/' config.xml
+          
+          # सुरक्षा ताला खोलने की अनुमति
           sed -i '/<\/widget>/i \    <access origin="*" />' config.xml
           sed -i '/<\/widget>/i \    <allow-intent href="http://*/*" />' config.xml
           sed -i '/<\/widget>/i \    <allow-intent href="https://*/*" />' config.xml
