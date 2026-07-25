@@ -1,1155 +1,293 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>FinCrx — Smart Financial Calculators</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg-0:#05080a;
-    --bg-1:#0a0f10;
-    --bg-2:#0d1517;
-    --panel:#0f1a1b;
-    --line:#1c2b2c;
-    --emerald:#22e0a0;
-    --emerald-dim:#147a5c;
-    --emerald-glow:rgba(34,224,160,0.18);
-    --text-1:#eaf3f0;
-    --text-2:#8ba39c;
-    --text-3:#5a726c;
-    --danger:#ff6b6b;
-  }
-  *{ -webkit-tap-highlight-color: transparent; }
-  html,body{
-    background:
-      radial-gradient(1200px 600px at 50% -10%, rgba(34,224,160,0.08), transparent 60%),
-      var(--bg-0);
-    font-family:'Inter',sans-serif;
-    color:var(--text-1);
-    min-height:100vh;
-  }
-  .font-display{ font-family:'Sora',sans-serif; }
-  ::-webkit-scrollbar{ width:0; height:0; }
-  .app-shell{
-    max-width:460px;
-    margin:0 auto;
-    min-height:100vh;
-    background:linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%);
-    border-left:1px solid var(--line);
-    border-right:1px solid var(--line);
-    position:relative;
-    padding-bottom:40px;
-  }
-  .glass-card{
-    background:linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
-    border:1px solid var(--line);
-    border-radius:20px;
-    box-shadow: 0 10px 30px -15px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.03);
-  }
-  .tab-btn{
-    position:relative;
-    transition:color .25s ease;
-    color:var(--text-2);
-    font-weight:600;
-    font-size:13px;
-    letter-spacing:.01em;
-  }
-  .tab-btn.active{ color:#04120c; }
-  .tab-indicator{
-    position:absolute; inset:4px;
-    border-radius:14px;
-    background:linear-gradient(135deg, var(--emerald), #16b689);
-    box-shadow:0 6px 18px -4px var(--emerald-glow);
-    transition: transform .35s cubic-bezier(.65,.05,.36,1);
-    z-index:0;
-  }
-  .tab-btn span{ position:relative; z-index:1; display:flex; align-items:center; justify-content:center; gap:6px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinCrx - Premium Financial Hub</title>
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        :root {
+            --bg-dark: #0b0f19;
+            --card-bg: #151d30;
+            --primary-green: #10b981;
+            --text-light: #ffffff;
+            --text-muted: #94a3b8;
+        }
 
-  input[type=range]{
-    -webkit-appearance:none; appearance:none;
-    width:100%; height:6px; border-radius:99px;
-    background:var(--bg-2);
-    outline:none;
-    accent-color:var(--emerald);
-  }
-  input[type=range]::-webkit-slider-runnable-track{
-    height:6px; border-radius:99px;
-    background:linear-gradient(90deg, var(--emerald) 0%, var(--emerald) var(--fill,50%), #16211f var(--fill,50%), #16211f 100%);
-  }
-  input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance:none;
-    width:20px; height:20px; margin-top:-7px;
-    border-radius:50%;
-    background:#04120c;
-    border:3px solid var(--emerald);
-    box-shadow:0 0 0 5px var(--emerald-glow), 0 4px 10px rgba(0,0,0,0.5);
-    cursor:pointer;
-  }
-  input[type=range]::-moz-range-track{
-    height:6px; border-radius:99px; background:#16211f;
-  }
-  input[type=range]::-moz-range-progress{
-    height:6px; border-radius:99px; background:var(--emerald);
-  }
-  input[type=range]::-moz-range-thumb{
-    width:16px; height:16px; border-radius:50%;
-    background:#04120c; border:3px solid var(--emerald);
-    box-shadow:0 0 0 5px var(--emerald-glow);
-    cursor:pointer;
-  }
+        /* स्मूथ ओपनिंग एनिमेशन */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-  .num-input{
-    background:var(--bg-2);
-    border:1px solid var(--line);
-    color:var(--text-1);
-    font-family:'Sora',sans-serif;
-    transition:border-color .2s, box-shadow .2s;
-  }
-  .num-input:focus{
-    border-color:var(--emerald-dim);
-    box-shadow:0 0 0 3px var(--emerald-glow);
-    outline:none;
-  }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-  .chip{
-    border:1px solid var(--line);
-    background:var(--bg-2);
-    color:var(--text-2);
-    font-weight:600;
-    transition:all .2s ease;
-  }
-  .chip.active{
-    background:linear-gradient(135deg, var(--emerald), #16b689);
-    color:#04120c;
-    border-color:transparent;
-    box-shadow:0 6px 16px -6px var(--emerald-glow);
-  }
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            box-sizing: border-box;
+            animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
 
-  .switch-track{
-    width:56px; height:30px; border-radius:99px;
-    background:var(--bg-2);
-    border:1px solid var(--line);
-    position:relative;
-    cursor:pointer;
-    transition:background .2s;
-  }
-  .switch-knob{
-    position:absolute; top:3px; left:3px;
-    width:22px; height:22px; border-radius:50%;
-    background:linear-gradient(135deg, var(--emerald), #16b689);
-    box-shadow:0 3px 8px rgba(0,0,0,0.5);
-    transition:transform .3s cubic-bezier(.65,.05,.36,1);
-    display:flex; align-items:center; justify-content:center;
-    font-size:11px; font-weight:800; color:#04120c;
-  }
-  .switch-track.inr .switch-knob{ transform:translateX(26px); }
+        .header h1 {
+            color: var(--primary-green);
+            text-align: center;
+            margin: 0 0 20px 0;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
 
-  .stat-value{ font-family:'Sora',sans-serif; letter-spacing:-0.01em; }
+        .tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            background: var(--bg-dark);
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
 
-  .fade-in{ animation:fadeIn .4s ease both; }
-  @keyframes fadeIn{ from{ opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px 2px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+            text-align: center;
+        }
 
-  .panel{ display:none; }
-  .panel.active{ display:block; }
+        .tab-btn.active {
+            background: var(--primary-green);
+            color: var(--bg-dark);
+        }
 
-  .btn-primary{
-    background:linear-gradient(135deg, var(--emerald), #16b689);
-    color:#04120c;
-    font-weight:700;
-    box-shadow:0 10px 24px -10px var(--emerald-glow);
-    transition:transform .15s ease, box-shadow .15s ease;
-  }
-  .btn-primary:active{ transform:scale(0.97); }
+        .calc-panel {
+            display: none;
+        }
 
-  .btn-ghost{
-    background:var(--bg-2);
-    border:1px solid var(--line);
-    color:var(--text-1);
-    transition:all .15s ease;
-  }
-  .btn-ghost:active{ transform:scale(0.97); }
+        .calc-panel.active {
+            display: block;
+        }
 
-  .toast{
-    position:fixed; left:50%; bottom:26px; transform:translate(-50%, 20px);
-    background:#0e1e19; border:1px solid var(--emerald-dim); color:var(--emerald);
-    padding:10px 18px; border-radius:12px; font-size:13px; font-weight:600;
-    box-shadow:0 12px 30px -10px rgba(0,0,0,0.6);
-    opacity:0; pointer-events:none;
-    transition:opacity .25s ease, transform .25s ease;
-    z-index:50;
-    display:flex; align-items:center; gap:8px;
-  }
-  .toast.show{ opacity:1; transform:translate(-50%, 0); }
+        .input-group {
+            margin-bottom: 15px;
+        }
 
-  .divider-line{ height:1px; background:linear-gradient(90deg, transparent, var(--line), transparent); }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
 
-  .glow-dot{
-    width:7px; height:7px; border-radius:50%;
-    background:var(--emerald);
-    box-shadow:0 0 8px 2px var(--emerald-glow);
-  }
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-  /* ============ AUTH GATEWAY ============ */
-  .auth-screen{
-    position:fixed; inset:0; z-index:100;
-    display:flex; align-items:center; justify-content:center;
-    padding:24px;
-    background:
-      radial-gradient(900px 500px at 50% -5%, rgba(34,224,160,0.10), transparent 55%),
-      radial-gradient(700px 500px at 100% 100%, rgba(20,122,92,0.08), transparent 60%),
-      #0F1115;
-    transition: transform .55s cubic-bezier(.65,.05,.36,1), opacity .5s ease;
-  }
-  .auth-screen.auth-slide-out{
-    transform: translateY(100%);
-    opacity:0;
-    pointer-events:none;
-  }
-  .auth-card{
-    width:100%; max-width:400px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    border:1px solid #22292f;
-    border-radius:26px;
-    padding:34px 28px 28px;
-    box-shadow:0 30px 80px -30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.04);
-  }
-  .auth-logo-badge{
-    width:52px; height:52px; border-radius:16px;
-    background:linear-gradient(135deg, var(--emerald), #0e6e52);
-    box-shadow:0 12px 30px -10px var(--emerald-glow);
-    display:flex; align-items:center; justify-content:center;
-    margin:0 auto 16px;
-  }
-  .auth-toggle{
-    position:relative;
-    display:grid; grid-template-columns:1fr 1fr;
-    background:#14171c;
-    border:1px solid #22292f;
-    border-radius:14px;
-    padding:4px;
-    height:46px;
-    margin-bottom:26px;
-  }
-  .auth-toggle-indicator{
-    position:absolute; top:4px; left:4px;
-    width:calc(50% - 4px); height:calc(100% - 8px);
-    border-radius:10px;
-    background:linear-gradient(135deg, var(--emerald), #16b689);
-    box-shadow:0 6px 18px -4px var(--emerald-glow);
-    transition:transform .35s cubic-bezier(.65,.05,.36,1);
-    z-index:0;
-  }
-  .auth-toggle-btn{
-    position:relative; z-index:1;
-    font-size:13px; font-weight:700; color:var(--text-2);
-    transition:color .25s ease;
-  }
-  .auth-toggle-btn.active{ color:#04120c; }
-  .auth-field{ margin-bottom:16px; }
-  .auth-field label{
-    display:block; font-size:12px; font-weight:600; margin-bottom:7px;
-    color:var(--text-2); letter-spacing:.01em;
-  }
-  .auth-input{
-    width:100%;
-    background:#14171c;
-    border:1px solid #22292f;
-    color:var(--text-1);
-    font-size:14px;
-    border-radius:12px;
-    padding:13px 14px;
-    transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
-  }
-  .auth-input::placeholder{ color:#4b5a58; }
-  .auth-input:focus{
-    outline:none;
-    border-color:var(--emerald);
-    background:#12211c;
-    box-shadow:0 0 0 4px var(--emerald-glow);
-  }
-  .auth-error{
-    display:flex; align-items:center; gap:7px;
-    font-size:12.5px; font-weight:600; color:var(--danger);
-    background:rgba(255,107,107,0.08);
-    border:1px solid rgba(255,107,107,0.25);
-    border-radius:10px;
-    padding:10px 12px;
-    margin-bottom:16px;
-  }
-  .auth-error::before{
-    content:"!"; display:flex; align-items:center; justify-content:center;
-    width:16px; height:16px; border-radius:50%; flex-shrink:0;
-    background:var(--danger); color:#1a0505; font-size:11px; font-weight:800;
-  }
-  .auth-switch-text{
-    text-align:center; font-size:12.5px; color:var(--text-3); margin-top:18px;
-  }
-  .auth-switch-text a{
-    color:var(--emerald); font-weight:700; text-decoration:none; margin-left:4px;
-    cursor:pointer;
-  }
-  .auth-switch-text a:hover{ text-decoration:underline; }
-  .auth-disclaimer{
-    text-align:center; font-size:10px; color:var(--text-3); margin-top:20px;
-    opacity:.7;
-  }
-  .logout-btn{
-    width:34px; height:34px; border-radius:50%;
-    background:var(--bg-2); border:1px solid var(--line);
-    display:flex; align-items:center; justify-content:center;
-    transition:all .2s ease;
-    flex-shrink:0;
-  }
-  .logout-btn:hover{ border-color:var(--danger); }
-  .logout-btn:active{ transform:scale(0.92); }
+        input[type="range"] {
+            flex: 1;
+            accent-color: var(--primary-green);
+        }
 
-  .auth-success{
-    display:flex; align-items:center; gap:7px;
-    font-size:12.5px; font-weight:600; color:var(--emerald);
-    background:rgba(34,224,160,0.08);
-    border:1px solid rgba(34,224,160,0.3);
-    border-radius:10px;
-    padding:10px 12px;
-    margin-bottom:16px;
-  }
-  .auth-success::before{
-    content:"✓"; display:flex; align-items:center; justify-content:center;
-    width:16px; height:16px; border-radius:50%; flex-shrink:0;
-    background:var(--emerald); color:#04120c; font-size:10px; font-weight:800;
-  }
-  @keyframes shake{
-    0%,100%{ transform:translateX(0); }
-    20%{ transform:translateX(-6px); }
-    40%{ transform:translateX(6px); }
-    60%{ transform:translateX(-4px); }
-    80%{ transform:translateX(4px); }
-  }
-</style>
+        input[type="number"] {
+            width: 90px;
+            background: var(--bg-dark);
+            border: 1px solid #2d3a54;
+            border-radius: 8px;
+            color: var(--text-light);
+            padding: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .results-box {
+            background: var(--bg-dark);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .result-item span:last-child {
+            color: var(--primary-green);
+            font-weight: bold;
+        }
+
+        .chart-container {
+            position: relative;
+            margin: 15px auto;
+            height: 180px;
+            width: 180px;
+        }
+
+        /* जनरल कैलकुलेटर स्टाइल */
+        .calc-screen {
+            width: 100%;
+            height: 60px;
+            background: var(--bg-dark);
+            border: 2px solid var(--primary-green);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            color: var(--primary-green);
+            font-size: 1.8rem;
+            text-align: right;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .grid-btn {
+            height: 50px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-num { background: #1f293d; color: var(--text-light); }
+        .btn-op { background: #2d3a54; color: var(--primary-green); }
+        .btn-clr { background: #ef4444; color: white; }
+        .btn-eq { background: var(--primary-green); color: var(--bg-dark); grid-column: span 2; }
+
+        /* GST बटन रो स्टाइल */
+        .gst-btn-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .gst-calc-btn {
+            background: #2d3a54;
+            color: var(--primary-green);
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
-<!-- ============ AUTH GATEWAY ============ -->
-<div class="auth-screen" id="authScreen">
-  <div class="auth-card fade-in">
-    <div class="auth-logo-badge">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 17L9 11L13 15L21 7" stroke="#04120c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7H21V13" stroke="#04120c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
-    <h2 class="font-display text-center text-xl leading-none mb-1.5" style="font-weight:800;" id="authHeading">Welcome Back</h2>
-    <p class="text-center text-xs mb-6" style="color:var(--text-3)" id="authSubheading">Log in to access your FinCrx dashboard</p>
-
-    <div class="auth-toggle">
-      <div class="auth-toggle-indicator" id="authToggleIndicator"></div>
-      <button type="button" class="auth-toggle-btn active" id="authTabLogin" onclick="setAuthMode('login')"><span>Login</span></button>
-      <button type="button" class="auth-toggle-btn" id="authTabSignup" onclick="setAuthMode('signup')"><span>Create Account</span></button>
+<div class="app-container">
+    <div class="header">
+        <h1>FinCrx Hub</h1>
     </div>
 
-    <div id="authError" class="auth-error" style="display:none;"></div>
-    <div id="authSuccess" class="auth-success" style="display:none;"></div>
-
-    <form id="authForm" onsubmit="handleAuthSubmit(event)" novalidate>
-      <div class="auth-field">
-        <label for="authEmail">Email Address</label>
-        <input type="email" id="authEmail" class="auth-input" placeholder="you@example.com" autocomplete="email">
-      </div>
-      <div class="auth-field">
-        <label for="authPassword">Password</label>
-        <input type="password" id="authPassword" class="auth-input" placeholder="••••••••" autocomplete="current-password">
-      </div>
-      <div class="auth-field" id="confirmPasswordField" style="max-height:0; overflow:hidden; margin-bottom:0; transition:max-height .35s ease, margin-bottom .35s ease;">
-        <label for="authConfirmPassword">Confirm Password</label>
-        <input type="password" id="authConfirmPassword" class="auth-input" placeholder="••••••••" autocomplete="new-password">
-      </div>
-
-      <button type="submit" class="btn-primary w-full py-3.5 rounded-xl text-sm mt-2" id="authSubmitBtn">Log In</button>
-    </form>
-
-    <p class="auth-switch-text" id="authSwitchText">Don't have an account?<a onclick="setAuthMode('signup')">Sign up</a></p>
-    <p class="auth-disclaimer">Secured locally on this device · Demo session</p>
-  </div>
-</div>
-
-<div class="app-shell">
-
-  <!-- Top bar -->
-  <div class="px-5 pt-6 pb-4 flex items-center justify-between">
-    <div class="flex items-center gap-2.5">
-      <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg, var(--emerald), #0e6e52); box-shadow:0 8px 20px -8px var(--emerald-glow);">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 17L9 11L13 15L21 7" stroke="#04120c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7H21V13" stroke="#04120c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div>
-        <h1 class="font-display font-800 text-lg leading-none" style="font-weight:800;">FinCrx</h1>
-        <p class="text-[10px] mt-1 tracking-wider uppercase" style="color:var(--text-3)">Financial Toolkit</p>
-      </div>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('sip')">SIP</button>
+        <button class="tab-btn" onclick="switchTab('emi')">EMI</button>
+        <button class="tab-btn" onclick="switchTab('gst')">GST</button>
+        <button class="tab-btn" onclick="switchTab('calc')">कैलकुलेटर</button>
     </div>
 
-    <div class="flex items-center gap-3">
-      <!-- Currency toggle -->
-      <div class="flex items-center gap-2">
-        <span id="usdLabel" class="text-xs font-semibold" style="color:var(--emerald)">USD</span>
-        <div id="currencySwitch" class="switch-track">
-          <div class="switch-knob" id="currencyKnob">₹</div>
-        </div>
-        <span id="inrLabel" class="text-xs font-semibold" style="color:var(--text-3)">INR</span>
-      </div>
-
-      <!-- Logout -->
-      <button class="logout-btn" onclick="logout()" title="Log out" aria-label="Log out">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="#8ba39c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 17l5-5-5-5" stroke="#8ba39c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12H9" stroke="#8ba39c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Tabs -->
-  <div class="px-5">
-    <div class="relative grid grid-cols-3 p-1 rounded-2xl glass-card" style="height:46px;">
-      <div class="tab-indicator" id="tabIndicator" style="width:calc(33.333% - 5px);"></div>
-      <button class="tab-btn active" data-tab="sip" onclick="switchTab('sip',0)"><span>SIP</span></button>
-      <button class="tab-btn" data-tab="emi" onclick="switchTab('emi',1)"><span>EMI</span></button>
-      <button class="tab-btn" data-tab="gst" onclick="switchTab('gst',2)"><span>GST</span></button>
-    </div>
-  </div>
-
-  <!-- ============ SIP PANEL ============ -->
-  <div class="panel active fade-in px-5 mt-5" id="panel-sip">
-    <div class="glass-card p-5">
-      <p class="text-xs font-semibold mb-4 tracking-wide" style="color:var(--text-2)">SIP CALCULATOR</p>
-
-      <!-- Monthly Investment -->
-      <div class="mb-5">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-sm" style="color:var(--text-2)">Monthly Investment</label>
-          <div class="flex items-center num-input rounded-lg px-2 py-1">
-            <span class="text-xs mr-1 currency-sym" style="color:var(--emerald)">$</span>
-            <input type="number" id="sipAmountInput" class="bg-transparent w-24 text-right text-sm font-semibold outline-none" value="500">
-          </div>
-        </div>
-        <input type="range" id="sipAmountSlider" min="10" max="200000" step="10" value="500">
-      </div>
-
-      <!-- Expected Return -->
-      <div class="mb-5">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-sm" style="color:var(--text-2)">Expected Return</label>
-          <div class="flex items-center num-input rounded-lg px-2 py-1">
-            <input type="number" id="sipReturnInput" class="bg-transparent w-14 text-right text-sm font-semibold outline-none" value="12" step="0.5">
-            <span class="text-xs ml-1" style="color:var(--emerald)">%</span>
-          </div>
-        </div>
-        <input type="range" id="sipReturnSlider" min="1" max="30" step="0.5" value="12">
-      </div>
-
-      <!-- Time Period -->
-      <div class="mb-1">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-sm" style="color:var(--text-2)">Time Period</label>
-          <div class="flex items-center num-input rounded-lg px-2 py-1">
-            <input type="number" id="sipYearsInput" class="bg-transparent w-14 text-right text-sm font-semibold outline-none" value="10">
-            <span class="text-xs ml-1" style="color:var(--emerald)">Yrs</span>
-          </div>
-        </div>
-        <input type="range" id="sipYearsSlider" min="1" max="40" step="1" value="10">
-      </div>
-    </div>
-
-    <!-- Chart + Results -->
-    <div class="glass-card p-5 mt-4">
-      <div class="flex items-center gap-5">
-        <div class="relative shrink-0" style="width:128px;height:128px;">
-          <canvas id="sipChart" width="128" height="128"></canvas>
-          <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span class="text-[9px] uppercase tracking-wider" style="color:var(--text-3)">Future Value</span>
-            <span class="text-[11px] font-bold stat-value" id="sipFvMini" style="color:var(--emerald)">$0</span>
-          </div>
-        </div>
-        <div class="flex-1 space-y-3">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2"><span class="glow-dot"></span><span class="text-xs" style="color:var(--text-2)">Invested</span></div>
-            <span class="text-sm font-semibold stat-value" id="sipInvested">$0</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2"><span class="w-[7px] h-[7px] rounded-full" style="background:#1c2b2c"></span><span class="text-xs" style="color:var(--text-2)">Wealth Gained</span></div>
-            <span class="text-sm font-semibold stat-value" id="sipGained">$0</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="divider-line my-4"></div>
-
-      <div class="text-center">
-        <p class="text-[10px] uppercase tracking-wider mb-1" style="color:var(--text-3)">Total Future Value</p>
-        <p class="text-3xl font-800 stat-value" id="sipFv" style="color:var(--text-1)">$0</p>
-        <p class="text-xs mt-1" style="color:var(--text-3)" id="sipFvCompact">≈ $0</p>
-      </div>
-    </div>
-
-    <div class="flex gap-3 mt-4">
-      <button class="flex-1 btn-primary py-3 rounded-xl text-sm flex items-center justify-center gap-2" onclick="shareReport('sip')">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 12V20H20V12" stroke="#04120c" stroke-width="2" stroke-linecap="round"/><path d="M12 4V16M12 4L7 9M12 4L17 9" stroke="#04120c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Share Report
-      </button>
-      <button class="btn-ghost py-3 px-4 rounded-xl text-sm" onclick="downloadReport('sip')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3V15M12 15L7 10M12 15L17 10" stroke="#eaf3f0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19H20" stroke="#eaf3f0" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- ============ EMI PANEL ============ -->
-  <div class="panel px-5 mt-5" id="panel-emi">
-    <div class="glass-card p-5">
-      <p class="text-xs font-semibold mb-4 tracking-wide" style="color:var(--text-2)">EMI LOAN CALCULATOR</p>
-
-      <div class="mb-5">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-sm" style="color:var(--text-2)">Loan Amount</label>
-          <div class="flex items-center num-input rounded-lg px-2 py-1">
-            <span class="text-xs mr-1 currency-sym" style="color:var(--emerald)">$</span>
-            <input type="number" id="emiAmountInput" class="bg-transparent w-28 text-right text-sm font-semibold outline-none" value="20000">
-          </div>
-        </div>
-        <input type="range" id="emiAmountSlider" min="1000" max="2000000" step="1000" value="20000">
-      </div>
-
-      <div class="mb-5">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-sm" style="color:var(--text-2)">Interest Rate</label>
-          <div class="flex items-center num-input rounded-lg px-2 py-1">
-            <input type="number" id="emiRateInput" class="bg-transparent w-14 text-right text-sm font-semibold outline-none" value="9" step="0.1">
-            <span class="text-xs ml-1" style="color:var(--emerald)">%</span>
-          </div>
-        </div>
-        <input type="range" id="emiRateSlider" min="1" max="25" step="0.1" value="9">
-      </div>
-
-      <div class="mb-1">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-sm" style="color:var(--text-2)">Loan Tenure</label>
-          <div class="flex items-center gap-2">
-            <div class="flex items-center num-input rounded-lg px-2 py-1">
-              <input type="number" id="emiTenureInput" class="bg-transparent w-14 text-right text-sm font-semibold outline-none" value="5">
+    <!-- 1. SIP पैनल -->
+    <div id="sip-panel" class="calc-panel active">
+        <div class="input-group">
+            <label>मासिक निवेश (₹)</label>
+            <div class="input-row">
+                <input type="range" id="sip-amt-slide" min="500" max="100000" step="500" value="5000" oninput="syncInput('sip-amt'); updateSIP();">
+                <input type="number" id="sip-amt-num" value="5000" oninput="syncInput('sip-amt'); updateSIP();">
             </div>
-            <div class="flex rounded-lg overflow-hidden border" style="border-color:var(--line)">
-              <button class="chip active px-2.5 py-1.5 text-[11px]" id="tenureYearsBtn" onclick="setTenureUnit('years')">Yrs</button>
-              <button class="chip px-2.5 py-1.5 text-[11px]" id="tenureMonthsBtn" onclick="setTenureUnit('months')">Mos</button>
+        </div>
+        <div class="input-group">
+            <label>अपेक्षित रिटर्न (वार्षिक %)</label>
+            <div class="input-row">
+                <input type="range" id="sip-rate-slide" min="1" max="30" step="0.5" value="12" oninput="syncInput('sip-rate'); updateSIP();">
+                <input type="number" id="sip-rate-num" value="12" oninput="syncInput('sip-rate'); updateSIP();">
             </div>
-          </div>
         </div>
-        <input type="range" id="emiTenureSlider" min="1" max="30" step="1" value="5">
-      </div>
+        <div class="input-group">
+            <label>समय अवधि (वर्ष)</label>
+            <div class="input-row">
+                <input type="range" id="sip-time-slide" min="1" max="40" step="1" value="10" oninput="syncInput('sip-time'); updateSIP();">
+                <input type="number" id="sip-time-num" value="10" oninput="syncInput('sip-time'); updateSIP();">
+            </div>
+        </div>
+        <div class="results-box">
+            <div class="result-item"><span>कुल निवेश:</span><span id="sip-invested">₹0</span></div>
+            <div class="result-item"><span>अनुमानित रिटर्न:</span><span id="sip-gain">₹0</span></div>
+            <div class="result-item"><span>कुल वैल्यू:</span><span id="sip-total">₹0</span></div>
+        </div>
+        <div class="chart-container"><canvas id="sipChart"></canvas></div>
     </div>
 
-    <div class="glass-card p-5 mt-4">
-      <div class="text-center mb-4">
-        <p class="text-[10px] uppercase tracking-wider mb-1" style="color:var(--text-3)">Monthly EMI</p>
-        <p class="text-3xl font-800 stat-value" id="emiMonthly" style="color:var(--emerald)">$0</p>
-      </div>
-      <div class="divider-line mb-4"></div>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <p class="text-[10px] uppercase tracking-wider mb-1" style="color:var(--text-3)">Total Interest</p>
-          <p class="text-lg font-bold stat-value" id="emiInterest">$0</p>
+    <!-- 2. EMI पैनल -->
+    <div id="emi-panel" class="calc-panel">
+        <div class="input-group">
+            <label>लोन राशि (₹)</label>
+            <div class="input-row">
+                <input type="range" id="emi-amt-slide" min="10000" max="10000000" step="10000" value="500000" oninput="syncInput('emi-amt'); updateEMI();">
+                <input type="number" id="emi-amt-num" value="500000" oninput="syncInput('emi-amt'); updateEMI();">
+            </div>
         </div>
-        <div class="text-right">
-          <p class="text-[10px] uppercase tracking-wider mb-1" style="color:var(--text-3)">Total Amount</p>
-          <p class="text-lg font-bold stat-value" id="emiTotal">$0</p>
+        <div class="input-group">
+            <label>ब्याज दर (वार्षिक %)</label>
+            <div class="input-row">
+                <input type="range" id="emi-rate-slide" min="1" max="20" step="0.1" value="8.5" oninput="syncInput('emi-rate'); updateEMI();">
+                <input type="number" id="emi-rate-num" value="8.5" oninput="syncInput('emi-rate'); updateEMI();">
+            </div>
         </div>
-      </div>
-      <div class="mt-4">
-        <div class="w-full h-2 rounded-full overflow-hidden flex" style="background:var(--bg-2)">
-          <div id="emiPrincipalBar" style="background:var(--emerald)" class="h-full"></div>
-          <div id="emiInterestBar" style="background:#3a4a48" class="h-full"></div>
+        <div class="input-group">
+            <label>अवधि (महीने)</label>
+            <div class="input-row">
+                <input type="range" id="emi-time-slide" min="6" max="360" step="6" value="60" oninput="syncInput('emi-time'); updateEMI();">
+                <input type="number" id="emi-time-num" value="60" oninput="syncInput('emi-time'); updateEMI();">
+            </div>
         </div>
-        <div class="flex justify-between mt-2 text-[10px]" style="color:var(--text-3)">
-          <span>Principal</span><span>Interest</span>
+        <div class="results-box">
+            <div class="result-item"><span>मासिक EMI:</span><span id="emi-monthly">₹0</span></div>
+            <div class="result-item"><span>कुल ब्याज:</span><span id="emi-interest">₹0</span></div>
+            <div class="result-item"><span>कुल भुगतान:</span><span id="emi-total">₹0</span></div>
         </div>
-      </div>
     </div>
 
-    <div class="flex gap-3 mt-4">
-      <button class="flex-1 btn-primary py-3 rounded-xl text-sm flex items-center justify-center gap-2" onclick="shareReport('emi')">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 12V20H20V12" stroke="#04120c" stroke-width="2" stroke-linecap="round"/><path d="M12 4V16M12 4L7 9M12 4L17 9" stroke="#04120c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Share Report
-      </button>
-      <button class="btn-ghost py-3 px-4 rounded-xl text-sm" onclick="downloadReport('emi')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3V15M12 15L7 10M12 15L17 10" stroke="#eaf3f0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19H20" stroke="#eaf3f0" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- ============ GST PANEL ============ -->
-  <div class="panel px-5 mt-5" id="panel-gst">
-    <div class="glass-card p-5">
-      <p class="text-xs font-semibold mb-4 tracking-wide" style="color:var(--text-2)">GST CALCULATOR</p>
-
-      <div class="mb-5">
-        <label class="text-sm mb-2 block" style="color:var(--text-2)">Amount</label>
-        <div class="flex items-center num-input rounded-xl px-3 py-3">
-          <span class="text-base mr-2 currency-sym" style="color:var(--emerald)">$</span>
-          <input type="number" id="gstAmountInput" class="bg-transparent w-full text-lg font-semibold outline-none" value="1000">
+    <!-- 3. GST पैनल -->
+    <div id="gst-panel" class="calc-panel">
+        <div class="input-group">
+            <label>मूल राशि (₹)</label>
+            <input type="number" id="gst-amount" value="1000" style="width:100%; text-align:left;" oninput="calculateGST(18)">
         </div>
-      </div>
-
-      <div class="mb-5">
-        <label class="text-sm mb-2 block" style="color:var(--text-2)">GST Rate</label>
-        <div class="grid grid-cols-4 gap-2">
-          <button class="chip py-2.5 rounded-lg text-sm" data-rate="5" onclick="setGstRate(5)">5%</button>
-          <button class="chip active py-2.5 rounded-lg text-sm" data-rate="12" onclick="setGstRate(12)">12%</button>
-          <button class="chip py-2.5 rounded-lg text-sm" data-rate="18" onclick="setGstRate(18)">18%</button>
-          <button class="chip py-2.5 rounded-lg text-sm" data-rate="28" onclick="setGstRate(28)">28%</button>
-        </div>
-      </div>
-
-      <div class="mb-1">
-        <label class="text-sm mb-2 block" style="color:var(--text-2)">Mode</label>
-        <div class="grid grid-cols-2 gap-2">
-          <button class="chip active py-2.5 rounded-lg text-sm" id="gstAddBtn" onclick="setGstMode('add')">Add GST</button>
-          <button class="chip py-2.5 rounded-lg text-sm" id="gstRemoveBtn" onclick="setGstMode('remove')">Remove GST</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="glass-card p-5 mt-4">
-      <div class="text-center mb-4">
-        <p class="text-[10px] uppercase tracking-wider mb-1" style="color:var(--text-3)">Total Amount</p>
-        <p class="text-3xl font-800 stat-value" id="gstTotal" style="color:var(--emerald)">$0</p>
-      </div>
-      <div class="divider-line mb-4"></div>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <p class="text-[10px] uppercase tracking-wider mb-1" style="color:var(--text-3)">Net Amount</p>
-          <p class="text-lg font-bold stat-value" id="gstNet">$0</p>
-        </div>
-        <div class="text-right">
-          <p class="text-[10px] uppercase tracking-wider mb-1" style="color:var(--text-3)">GST Amount</p>
-          <p class="text-lg font-bold stat-value" id="gstAmountOut">$0</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex gap-3 mt-4">
-      <button class="flex-1 btn-primary py-3 rounded-xl text-sm flex items-center justify-center gap-2" onclick="shareReport('gst')">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 12V20H20V12" stroke="#04120c" stroke-width="2" stroke-linecap="round"/><path d="M12 4V16M12 4L7 9M12 4L17 9" stroke="#04120c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Share Report
-      </button>
-      <button class="btn-ghost py-3 px-4 rounded-xl text-sm" onclick="downloadReport('gst')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3V15M12 15L7 10M12 15L17 10" stroke="#eaf3f0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19H20" stroke="#eaf3f0" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <p class="text-center text-[10px] mt-8" style="color:var(--text-3)">FinCrx · Figures are indicative, not financial advice</p>
-</div>
-
-<div class="toast" id="toast"><span class="glow-dot"></span><span id="toastMsg">Copied to clipboard</span></div>
-
-<script>
-/* ===================== STATE ===================== */
-const state = {
-  currency: 'USD', // 'USD' | 'INR'
-  tenureUnit: 'years',
-  gstRate: 12,
-  gstMode: 'add'
-};
-
-/* ===================== AUTH GATEWAY ===================== */
-/*
-  Standalone-file demo auth: credentials are hashed (SHA-256 via the
-  browser's native Web Crypto API — no external library needed) and
-  stored in this device's localStorage, simulating a session until a
-  real backend (e.g. Firebase Auth) is wired up. Swap getUsers/saveUsers/
-  startSession for real Firebase calls when deploying online.
-*/
-const AUTH_USERS_KEY = 'fincrx_users_v1';
-const AUTH_SESSION_KEY = 'fincrx_session_v1';
-let authMode = 'login';
-
-function getUsers(){
-  try { return JSON.parse(localStorage.getItem(AUTH_USERS_KEY)) || {}; }
-  catch(e){ return {}; }
-}
-function saveUsers(users){
-  localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(users));
-}
-async function hashPassword(pw){
-  const enc = new TextEncoder().encode(pw);
-  const buf = await crypto.subtle.digest('SHA-256', enc);
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
-function isValidEmail(email){
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function hideAuthMessages(){
-  document.getElementById('authError').style.display = 'none';
-  document.getElementById('authSuccess').style.display = 'none';
-}
-function showAuthError(msg){
-  document.getElementById('authSuccess').style.display = 'none';
-  const el = document.getElementById('authError');
-  el.textContent = msg;
-  el.style.display = 'flex';
-  const card = document.querySelector('.auth-card');
-  card.style.animation = 'none';
-  requestAnimationFrame(() => { card.style.animation = 'shake .4s ease'; });
-}
-function showAuthSuccess(msg){
-  document.getElementById('authError').style.display = 'none';
-  const el = document.getElementById('authSuccess');
-  el.textContent = msg;
-  el.style.display = 'flex';
-}
-
-function setAuthMode(mode){
-  authMode = mode;
-  hideAuthMessages();
-  const indicator = document.getElementById('authToggleIndicator');
-  const confirmField = document.getElementById('confirmPasswordField');
-  const loginTab = document.getElementById('authTabLogin');
-  const signupTab = document.getElementById('authTabSignup');
-  const heading = document.getElementById('authHeading');
-  const subheading = document.getElementById('authSubheading');
-  const submitBtn = document.getElementById('authSubmitBtn');
-  const switchText = document.getElementById('authSwitchText');
-
-  if (mode === 'signup'){
-    indicator.style.transform = 'translateX(100%)';
-    loginTab.classList.remove('active'); signupTab.classList.add('active');
-    heading.textContent = 'Create Your Account';
-    subheading.textContent = 'Set up secure access to your dashboard';
-    submitBtn.textContent = 'Create Account';
-    confirmField.style.maxHeight = '90px';
-    confirmField.style.marginBottom = '16px';
-    switchText.innerHTML = "Already have an account?<a onclick=\"setAuthMode('login')\">Log in</a>";
-  } else {
-    indicator.style.transform = 'translateX(0)';
-    signupTab.classList.remove('active'); loginTab.classList.add('active');
-    heading.textContent = 'Welcome Back';
-    subheading.textContent = 'Log in to access your FinCrx dashboard';
-    submitBtn.textContent = 'Log In';
-    confirmField.style.maxHeight = '0';
-    confirmField.style.marginBottom = '0';
-    switchText.innerHTML = "Don't have an account?<a onclick=\"setAuthMode('signup')\">Sign up</a>";
-  }
-}
-
-async function handleAuthSubmit(e){
-  e.preventDefault();
-  hideAuthMessages();
-  const email = document.getElementById('authEmail').value.trim().toLowerCase();
-  const password = document.getElementById('authPassword').value;
-
-  if (!email || !isValidEmail(email)){
-    showAuthError('Invalid email — please check and try again.');
-    return;
-  }
-  if (!password || password.length < 6){
-    showAuthError('Password must be at least 6 characters.');
-    return;
-  }
-
-  const users = getUsers();
-
-  if (authMode === 'signup'){
-    const confirmPw = document.getElementById('authConfirmPassword').value;
-    if (password !== confirmPw){
-      showAuthError('Passwords do not match.');
-      return;
-    }
-    if (users[email]){
-      showAuthError('An account with this email already exists.');
-      return;
-    }
-    users[email] = await hashPassword(password);
-    saveUsers(users);
-    showAuthSuccess('Account created — welcome!');
-    startSession(email);
-    setTimeout(unlockDashboard, 700);
-  } else {
-    if (!users[email]){
-      showAuthError('No account found for this email.');
-      return;
-    }
-    const hash = await hashPassword(password);
-    if (users[email] !== hash){
-      showAuthError('Incorrect password. Please try again.');
-      return;
-    }
-    showAuthSuccess('Login successful!');
-    startSession(email);
-    setTimeout(unlockDashboard, 700);
-  }
-}
-
-function startSession(email){ localStorage.setItem(AUTH_SESSION_KEY, email); }
-function endSession(){ localStorage.removeItem(AUTH_SESSION_KEY); }
-function getSession(){ return localStorage.getItem(AUTH_SESSION_KEY); }
-
-function unlockDashboard(){
-  document.getElementById('authScreen').classList.add('auth-slide-out');
-  document.body.style.overflow = 'auto';
-}
-
-function lockDashboard(){
-  const authScreen = document.getElementById('authScreen');
-  document.getElementById('authForm').reset();
-  hideAuthMessages();
-  setAuthMode('login');
-  authScreen.classList.remove('auth-slide-out');
-  document.body.style.overflow = 'hidden';
-}
-
-function logout(){
-  endSession();
-  lockDashboard();
-  showToast('Logged out securely');
-}
-
-(function initAuth(){
-  document.body.style.overflow = 'hidden';
-  if (getSession()){
-    document.getElementById('authScreen').classList.add('auth-slide-out');
-    document.body.style.overflow = 'auto';
-  }
-})();
-
-/* ===================== FORMATTING ===================== */
-function symbol(){ return state.currency === 'INR' ? '₹' : '$'; }
-
-function compactINR(num){
-  const abs = Math.abs(num);
-  if (abs >= 1e7) return (num/1e7).toFixed(2).replace(/\.00$/,'') + ' Cr';
-  if (abs >= 1e5) return (num/1e5).toFixed(2).replace(/\.00$/,'') + ' L';
-  if (abs >= 1e3) return (num/1e3).toFixed(1).replace(/\.0$/,'') + ' K';
-  return Math.round(num).toString();
-}
-function compactUSD(num){
-  const abs = Math.abs(num);
-  if (abs >= 1e9) return (num/1e9).toFixed(2).replace(/\.00$/,'') + 'B';
-  if (abs >= 1e6) return (num/1e6).toFixed(2).replace(/\.00$/,'') + 'M';
-  if (abs >= 1e3) return (num/1e3).toFixed(1).replace(/\.0$/,'') + 'K';
-  return Math.round(num).toString();
-}
-
-function fmtFull(num){
-  num = Math.round(num);
-  const locale = state.currency === 'INR' ? 'en-IN' : 'en-US';
-  return symbol() + num.toLocaleString(locale, {maximumFractionDigits:0});
-}
-function fmtCompact(num){
-  const c = state.currency === 'INR' ? compactINR(num) : compactUSD(num);
-  return symbol() + c;
-}
-
-/* ===================== TABS ===================== */
-function switchTab(name, idx){
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.tab-btn[data-tab="${name}"]`).classList.add('active');
-  document.getElementById('tabIndicator').style.transform = `translateX(${idx * 100}%)`;
-}
-
-/* ===================== CURRENCY TOGGLE ===================== */
-const currencySwitch = document.getElementById('currencySwitch');
-currencySwitch.addEventListener('click', () => {
-  state.currency = state.currency === 'USD' ? 'INR' : 'USD';
-  const isInr = state.currency === 'INR';
-  currencySwitch.classList.toggle('inr', isInr);
-  document.getElementById('currencyKnob').textContent = isInr ? '₹' : '$';
-  document.getElementById('usdLabel').style.color = isInr ? 'var(--text-3)' : 'var(--emerald)';
-  document.getElementById('inrLabel').style.color = isInr ? 'var(--emerald)' : 'var(--text-3)';
-  document.querySelectorAll('.currency-sym').forEach(el => el.textContent = symbol());
-  calcSIP(); calcEMI(); calcGST();
-});
-
-/* ===================== SLIDER <-> INPUT SYNC ===================== */
-function linkPair(sliderId, inputId, onChange, decimals=0){
-  const slider = document.getElementById(sliderId);
-  const input = document.getElementById(inputId);
-
-  function updateFill(){
-    const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
-    slider.style.setProperty('--fill', pct + '%');
-  }
-  function clamp(v){
-    v = parseFloat(v);
-    if (isNaN(v)) v = parseFloat(slider.min);
-    v = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), v));
-    return v;
-  }
-
-  slider.addEventListener('input', () => {
-    input.value = decimals > 0 ? parseFloat(slider.value).toFixed(decimals) : slider.value;
-    updateFill();
-    onChange();
-  });
-  input.addEventListener('input', () => {
-    let v = parseFloat(input.value);
-    if (!isNaN(v)){
-      slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), v));
-      updateFill();
-      onChange();
-    }
-  });
-  input.addEventListener('blur', () => {
-    input.value = decimals > 0 ? clamp(input.value).toFixed(decimals) : clamp(input.value);
-    slider.value = input.value;
-    updateFill();
-    onChange();
-  });
-  updateFill();
-}
-
-/* ===================== SIP ===================== */
-let sipChart;
-function calcSIP(){
-  const M = parseFloat(document.getElementById('sipAmountInput').value) || 0;
-  const annualRate = parseFloat(document.getElementById('sipReturnInput').value) || 0;
-  const years = parseFloat(document.getElementById('sipYearsInput').value) || 0;
-  const n = years * 12;
-  const r = annualRate / 100 / 12;
-
-  let fv;
-  if (r === 0) fv = M * n;
-  else fv = M * ((Math.pow(1+r, n) - 1) / r) * (1+r);
-
-  const invested = M * n;
-  const gained = Math.max(fv - invested, 0);
-
-  document.getElementById('sipInvested').textContent = fmtFull(invested);
-  document.getElementById('sipGained').textContent = fmtFull(gained);
-  document.getElementById('sipFv').textContent = fmtFull(fv);
-  document.getElementById('sipFvCompact').textContent = '≈ ' + fmtCompact(fv);
-  document.getElementById('sipFvMini').textContent = fmtCompact(fv);
-
-  const ctx = document.getElementById('sipChart');
-  const data = [invested, gained];
-  if (!sipChart){
-    sipChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Invested', 'Wealth Gained'],
-        datasets: [{
-          data,
-          backgroundColor: ['#1c2b2c', '#22e0a0'],
-          borderColor: '#0a0f10',
-          borderWidth: 3,
-          hoverOffset: 4
-        }]
-      },
-      options: {
-        cutout: '72%',
-        plugins: { legend: { display:false }, tooltip: { enabled:true } },
-        animation: { duration: 500 }
-      }
-    });
-  } else {
-    sipChart.data.datasets[0].data = data;
-    sipChart.update();
-  }
-
-  return { M, annualRate, years, invested, gained, fv };
-}
-
-/* ===================== EMI ===================== */
-function setTenureUnit(unit){
-  state.tenureUnit = unit;
-  const slider = document.getElementById('emiTenureSlider');
-  const input = document.getElementById('emiTenureInput');
-  document.getElementById('tenureYearsBtn').classList.toggle('active', unit === 'years');
-  document.getElementById('tenureMonthsBtn').classList.toggle('active', unit === 'months');
-
-  if (unit === 'months'){
-    slider.min = 3; slider.max = 360; slider.step = 1;
-    let years = parseFloat(input.value) || 5;
-    input.value = Math.round(years * 12);
-  } else {
-    slider.min = 1; slider.max = 30; slider.step = 1;
-    let months = parseFloat(input.value) || 60;
-    input.value = Math.max(1, Math.round(months / 12));
-  }
-  slider.value = input.value;
-  const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
-  slider.style.setProperty('--fill', pct + '%');
-  calcEMI();
-}
-
-function calcEMI(){
-  const P = parseFloat(document.getElementById('emiAmountInput').value) || 0;
-  const annualRate = parseFloat(document.getElementById('emiRateInput').value) || 0;
-  const tenureRaw = parseFloat(document.getElementById('emiTenureInput').value) || 0;
-  const N = state.tenureUnit === 'years' ? tenureRaw * 12 : tenureRaw;
-  const R = annualRate / 12 / 100;
-
-  let emi;
-  if (R === 0) emi = N > 0 ? P / N : 0;
-  else emi = (P * R * Math.pow(1+R, N)) / (Math.pow(1+R, N) - 1);
-  if (!isFinite(emi)) emi = 0;
-
-  const totalPayment = emi * N;
-  const totalInterest = Math.max(totalPayment - P, 0);
-
-  document.getElementById('emiMonthly').textContent = fmtFull(emi);
-  document.getElementById('emiInterest').textContent = fmtFull(totalInterest);
-  document.getElementById('emiTotal').textContent = fmtFull(totalPayment);
-
-  const pPct = totalPayment > 0 ? (P / totalPayment) * 100 : 50;
-  document.getElementById('emiPrincipalBar').style.width = pPct + '%';
-  document.getElementById('emiInterestBar').style.width = (100 - pPct) + '%';
-
-  return { P, annualRate, N, emi, totalInterest, totalPayment };
-}
-
-/* ===================== GST ===================== */
-function setGstRate(rate){
-  state.gstRate = rate;
-  document.querySelectorAll('#panel-gst [data-rate]').forEach(btn => {
-    btn.classList.toggle('active', parseFloat(btn.dataset.rate) === rate);
-  });
-  calcGST();
-}
-function setGstMode(mode){
-  state.gstMode = mode;
-  document.getElementById('gstAddBtn').classList.toggle('active', mode === 'add');
-  document.getElementById('gstRemoveBtn').classList.toggle('active', mode === 'remove');
-  calcGST();
-}
-function calcGST(){
-  const amount = parseFloat(document.getElementById('gstAmountInput').value) || 0;
-  const rate = state.gstRate;
-  let net, gstAmt, total;
-
-  if (state.gstMode === 'add'){
-    net = amount;
-    gstAmt = amount * rate / 100;
-    total = net + gstAmt;
-  } else {
-    total = amount;
-    net = amount / (1 + rate/100);
-    gstAmt = total - net;
-  }
-
-  document.getElementById('gstNet').textContent = fmtFull(net);
-  document.getElementById('gstAmountOut').textContent = fmtFull(gstAmt);
-  document.getElementById('gstTotal').textContent = fmtFull(total);
-
-  return { amount, rate, mode: state.gstMode, net, gstAmt, total };
-}
-
-/* ===================== SHARE / DOWNLOAD REPORT ===================== */
-function buildReportText(type){
-  const now = new Date().toLocaleString();
-  let lines = [];
-  lines.push('FinCrx — Financial Report');
-  lines.push('Generated: ' + now);
-  lines.push('Currency: ' + state.currency);
-  lines.push('-----------------------------------');
-
-  if (type === 'sip'){
-    const d = calcSIP();
-    lines.push('SIP CALCULATOR');
-    lines.push('Monthly Investment: ' + fmtFull(d.M));
-    lines.push('Expected Return: ' + d.annualRate + '% p.a.');
-    lines.push('Time Period: ' + d.years + ' years');
-    lines.push('-----------------------------------');
-    lines.push('Total Invested: ' + fmtFull(d.invested));
-    lines.push('Wealth Gained: ' + fmtFull(d.gained));
-    lines.push('Total Future Value: ' + fmtFull(d.fv));
-  } else if (type === 'emi'){
-    const d = calcEMI();
-    lines.push('EMI LOAN CALCULATOR');
-    lines.push('Loan Amount: ' + fmtFull(d.P));
-    lines.push('Interest Rate: ' + d.annualRate + '% p.a.');
-    lines.push('Tenure: ' + d.N + ' months (' + (d.N/12).toFixed(1) + ' yrs)');
-    lines.push('-----------------------------------');
-    lines.push('Monthly EMI: ' + fmtFull(d.emi));
-    lines.push('Total Interest Payable: ' + fmtFull(d.totalInterest));
-    lines.push('Total Amount Payable: ' + fmtFull(d.totalPayment));
-  } else if (type === 'gst'){
-    const d = calcGST();
-    lines.push('GST CALCULATOR');
-    lines.push('Amount Entered: ' + fmtFull(d.amount));
-    lines.push('GST Rate: ' + d.rate + '%');
-    lines.push('Mode: ' + (d.mode === 'add' ? 'Add GST' : 'Remove GST'));
-    lines.push('-----------------------------------');
-    lines.push('Net Amount: ' + fmtFull(d.net));
-    lines.push('GST Amount: ' + fmtFull(d.gstAmt));
-    lines.push('Total Amount: ' + fmtFull(d.total));
-  }
-  lines.push('-----------------------------------');
-  lines.push('Figures are indicative, not financial advice.');
-  return lines.join('\n');
-}
-
-let toastTimer;
-function showToast(msg){
-  const toast = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
-}
-
-async function shareReport(type){
-  const text = buildReportText(type);
-  try {
-    if (navigator.share) {
-      await navigator.share({ title: 'FinCrx Report', text });
-      return;
-    }
-  } catch(e) { /* fall through to clipboard */ }
-
-  try {
-    await navigator.clipboard.writeText(text);
-    showToast('Report copied to clipboard');
-  } catch(e){
-    fallbackCopy(text);
-  }
-}
-
-function fallbackCopy(text){
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.left = '-9999px';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); showToast('Report copied to clipboard'); }
-  catch(e){ showToast('Copy failed — try download'); }
-  document.body.removeChild(ta);
-}
-
-function downloadReport(type){
-  const text = buildReportText(type);
-  const blob = new Blob([text], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'FinCrx-' + type.toUpperCase() + '-Report.txt';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast('Report downloaded');
-}
-
-/* ===================== INIT ===================== */
-linkPair('sipAmountSlider', 'sipAmountInput', calcSIP);
-linkPair('sipReturnSlider', 'sipReturnInput', calcSIP, 1);
-linkPair('sipYearsSlider', 'sipYearsInput', calcSIP);
-
-linkPair('emiAmountSlider', 'emiAmountInput', calcEMI);
-linkPair('emiRateSlider', 'emiRateInput', calcEMI, 1);
-linkPair('emiTenureSlider', 'emiTenureInput', calcEMI);
-
-document.getElementById('gstAmountInput').addEventListener('input', calcGST);
-
-calcSIP();
-calcEMI();
-calcGST();
-</script>
-</body>
-</html>
+        <label style="color:var(--text-muted); font-size:0.9rem;">GST दर चुनें:</label>
+        <div class="gst-btn-row">
+            <button class="gst-calc-btn" onclick="calculateGST(5)">5%</button>
+            <button class="gst-calc-btn" onclick="calculateGST(12)">12%</button>
+            <button class="gst-calc-btn" onclick="calculateGST(18)">18%</button>
+          
