@@ -18,10 +18,13 @@ jobs:
           rm -rf www/*
           cp ../fincrx.html www/index.html
           
-          # सीधे एंड्रॉइड के सिस्टम फोल्डर (res) में आइकन रिप्लेस करें
-          cd platforms/android/app/src/main/res
-          find . -name "ic_launcher.png" -exec cp -f ../../../../../../../icon.png {} \;
-          cd ../../../../../..
+          # आइकन सेटअप
+          mkdir -p res
+          cp ../icon.png res/icon.png
+          
+          # config.xml आइकन रजिस्ट्रेशन
+          sed -i '/<\/widget>/i \    <icon src="res/icon.png" />' config.xml
+          sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/icon.png" />' config.xml
           
           cordova build android --confirm=false
       - name: Find All Android Packages
