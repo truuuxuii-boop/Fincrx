@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinCrx - Premium Financial Hub</title>
-    <script src="https://jsdelivr.net"></script>
     <style>
         :root {
             --bg-dark: #0b0f19;
@@ -14,7 +13,6 @@
             --text-muted: #94a3b8;
         }
 
-        /* स्मूथ लॉन्च एनिमेशन */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -33,7 +31,63 @@
             box-sizing: border-box;
         }
 
+        /* लॉगिन स्क्रीन स्टाइल */
+        .login-screen {
+            width: 100%;
+            max-width: 450px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px 20px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            box-sizing: border-box;
+            text-align: center;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .login-screen h2 {
+            color: var(--primary-green);
+            margin-bottom: 10px;
+        }
+
+        .login-screen p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        .input-field {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid #2d3a54;
+            border-radius: 12px;
+            color: var(--text-light);
+            padding: 14px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary-green);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: var(--primary-green);
+            color: var(--bg-dark);
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        /* मुख्य ऐप कंटेनर (लॉगिन के बाद दिखेगा) */
         .app-container {
+            display: none;
             width: 100%;
             max-width: 450px;
             background: var(--card-bg);
@@ -41,7 +95,7 @@
             padding: 20px;
             box-shadow: 0 12px 40px rgba(0,0,0,0.6);
             box-sizing: border-box;
-            animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation: fadeInUp 0.6s ease forwards;
         }
 
         .header h1 {
@@ -90,14 +144,12 @@
         .results-box { background: var(--bg-dark); border-radius: 12px; padding: 15px; margin-top: 15px; }
         .result-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
         .result-item span:last-child { color: var(--primary-green); font-weight: bold; }
-        .chart-container { position: relative; margin: 20px auto; height: 200px; width: 200px; }
 
         .share-btn {
             width: 100%; background: var(--primary-green); color: var(--bg-dark); border: none;
             padding: 12px; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer;
             margin-top: 15px; transition: 0.2s;
         }
-        .share-btn:active { transform: scale(0.98); }
 
         /* जनरल कैलकुलेटर स्टाइल */
         .calc-screen {
@@ -123,7 +175,17 @@
 </head>
 <body>
 
-<div class="app-container">
+<!-- 1. लॉगिन बॉक्स (सबसे पहले दिखेगा) -->
+<div id="loginCard" class="login-screen">
+    <h2>FinCrx में लॉगिन करें</h2>
+    <p>आगे बढ़ने के लिए अपना विवरण दर्ज करें</p>
+    <input type="text" placeholder="मोबाइल नंबर या ईमेल आईडी" class="input-field" id="uName">
+    <input type="password" placeholder="पासवर्ड" class="input-field" id="uPass">
+    <button class="login-btn" onclick="handleLogin()">लॉगिन करें</button>
+</div>
+
+<!-- 2. मुख्य ऐप (लॉगिन के बाद खुलेगा) -->
+<div id="appCard" class="app-container">
     <div class="header">
         <h1>FinCrx Hub</h1>
     </div>
@@ -135,7 +197,7 @@
         <button class="tab-btn" onclick="switchTab('calc')">कैलकुलेटर</button>
     </div>
 
-    <!-- 1. SIP पैनल -->
+    <!-- SIP पैनल -->
     <div id="sip-panel" class="calc-panel active">
         <div class="input-group">
             <label>मासिक निवेश (₹)</label>
@@ -163,11 +225,10 @@
             <div class="result-item"><span>अनुमानित रिटर्न:</span><span id="sip-gain">₹0</span></div>
             <div class="result-item"><span>कुल वैल्यू:</span><span id="sip-total">₹0</span></div>
         </div>
-        <div class="chart-container"><canvas id="sipChart"></canvas></div>
         <button class="share-btn" onclick="shareReport('SIP')">Share Report</button>
     </div>
 
-    <!-- 2. EMI पैनल -->
+    <!-- EMI पैनल -->
     <div id="emi-panel" class="calc-panel">
         <div class="input-group">
             <label>लोन राशि (₹)</label>
@@ -186,31 +247,4 @@
         <div class="input-group">
             <label>अवधि (महीने)</label>
             <div class="input-row">
-                <input type="range" id="emi-time-slide" min="6" max="360" step="6" value="60" oninput="syncInput('emi-time'); updateEMI();">
-                <input type="number" id="emi-time-num" value="60" oninput="syncInput('emi-time'); updateEMI();">
-            </div>
-        </div>
-        <div class="results-box">
-            <div class="result-item"><span>मासिक EMI:</span><span id="emi-monthly">₹0</span></div>
-            <div class="result-item"><span>कुल ब्याज:</span><span id="emi-interest">₹0</span></div>
-            <div class="result-item"><span>कुल भुगतान:</span><span id="emi-total">₹0</span></div>
-        </div>
-        <button class="share-btn" onclick="shareReport('EMI')">Share Report</button>
-    </div>
-
-    <!-- 3. GST पैनल -->
-    <div id="gst-panel" class="calc-panel">
-        <div class="input-group">
-            <label>मूल राशि (₹)</label>
-            <input type="number" id="gst-amount" value="1000" style="width:100%; text-align:left; box-sizing: border-box;" oninput="calculateGST()">
-        </div>
-        <label style="color:var(--text-muted); font-size:0.9rem;">GST दर चुनें:</label>
-        <div class="gst-btn-row">
-            <button class="gst-calc-btn" id="gst-5" onclick="changeGSTRate(5)">5%</button>
-            <button class="gst-calc-btn" id="gst-12" onclick="changeGSTRate(12)">12%</button>
-            <button class="gst-calc-btn active" id="gst-18" onclick="changeGSTRate(18)">18%</button>
-            <button class="gst-calc-btn" id="gst-28" onclick="changeGSTRate(28)">28%</button>
-        </div>
-        <div class="results-box">
-            <div class="result-item"><span>चुनी गई GST दर:</span><span id="gst-rate-show">18%</span></div>
-            
+                
